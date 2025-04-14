@@ -5,9 +5,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: url-shortener
+    container_name: url-shortener_v1
     ports:
-      - "8080:80"
+      - "8081:80"
     volumes:
       - .:/var/www/html
     environment:
@@ -19,20 +19,32 @@ services:
     depends_on:
       - db
 
+      # MySQL Database
   db:
     image: mysql:8.0
-    container_name: shortener_db
-    restart: always
-    ports:
-      - "3306:3306"
+    container_name: shorter_db
     environment:
-      MYSQL_ROOT_PASSWORD: 
-      MYSQL_DATABASE: url_shortner
-      MYSQL_USER: root
-      MYSQL_PASSWORD:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}  # This matches DB_DATABASE in .env
+      MYSQL_USER: ${DB_USERNAME}      # This matches DB_USERNAME in .env
+      MYSQL_PASSWORD: ${DB_PASSWORD}  # This matches DB_PASSWORD in .env
     volumes:
       - db_data:/var/lib/mysql
-      - ./database.sql:/docker-entrypoint-initdb.d/url_shortner.sql
+      - ./indesign.sql:/docker-entrypoint-initdb.d/url_shortner.sql  # Import initial data
+    ports:
+      - "3306:3306"  # Expose MySQL to connect from host
+
+       # phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin_v1
+    environment:
+      PMA_HOST: db  # Connects to the MySQL container by its service name
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}  # Must match the root password in the db service
+    ports:
+      - "8081:80"  # Access phpMyAdmin at http://localhost:8080
+    depends_on:
+      - db
 
 volumes:
   db_data:

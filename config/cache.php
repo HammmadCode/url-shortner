@@ -76,15 +76,15 @@ return [
             ],
         ],
 
-        // 'redis' => [
-        //     'driver' => 'redis',
-        //     'connection' => 'cache',
-        //     'lock_connection' => 'default',
-        // ],
         'redis' => [
             'driver' => 'redis',
-            'connection' => 'default',
+            'connection' => 'cache',
+            'lock_connection' => 'default',
         ],
+        // 'redis' => [
+        //     'driver' => 'redis',
+        //     'connection' => 'default',
+        // ],
 
 
         'dynamodb' => [
